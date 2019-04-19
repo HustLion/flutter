@@ -247,11 +247,13 @@ class AllowMultipleHorizontalDragGestureRecognizer extends HorizontalDragGesture
   @override
   void resolve(GestureDisposition disposition) {
     if (bindedPosition.pixels >= bindedPosition.maxScrollExtent) {
-      // 找一下方向
+      // determine the scroll direction
       if (_hasSufficientPendingDragDeltaToAccept) {
 //        print('${_pendingDragOffset.dx}');
         if (_pendingDragOffset.dx > 0) {
           super.resolve(disposition);
+        } else {
+          super.resolve(GestureDisposition.rejected);
         }
       } else {
         super.resolve(GestureDisposition.rejected);
