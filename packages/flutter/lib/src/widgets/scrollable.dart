@@ -380,9 +380,9 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin
       switch (widget.axis) {
         case Axis.vertical:
           _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer(),
-              (VerticalDragGestureRecognizer instance) {
+            AllowMultipleVerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<AllowMultipleVerticalDragGestureRecognizer>(
+              () => AllowMultipleVerticalDragGestureRecognizer(),
+              (AllowMultipleVerticalDragGestureRecognizer instance) {
                 instance
                   ..onDown = _handleDragDown
                   ..onStart = _handleDragStart
@@ -398,9 +398,9 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin
           break;
         case Axis.horizontal:
           _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            HorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-              (HorizontalDragGestureRecognizer instance) {
+            AllowMultipleHorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<AllowMultipleHorizontalDragGestureRecognizer>(
+              () => AllowMultipleHorizontalDragGestureRecognizer(),
+              (AllowMultipleHorizontalDragGestureRecognizer instance) {
                 instance
                   ..onDown = _handleDragDown
                   ..onStart = _handleDragStart
@@ -410,6 +410,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin
                   ..minFlingDistance = _physics?.minFlingDistance
                   ..minFlingVelocity = _physics?.minFlingVelocity
                   ..maxFlingVelocity = _physics?.maxFlingVelocity;
+                instance.bindedPosition = _position;
               },
             ),
           };

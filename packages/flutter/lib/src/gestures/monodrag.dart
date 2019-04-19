@@ -8,6 +8,7 @@ import 'drag_details.dart';
 import 'events.dart';
 import 'recognizer.dart';
 import 'velocity_tracker.dart';
+import '../widgets/scroll_position.dart';
 
 enum _DragState {
   ready,
@@ -231,6 +232,35 @@ abstract class DragGestureRecognizer extends OneSequenceGestureRecognizer {
   void dispose() {
     _velocityTrackers.clear();
     super.dispose();
+  }
+}
+
+class AllowMultipleVerticalDragGestureRecognizer extends VerticalDragGestureRecognizer {
+  @override
+  void rejectGesture(int pointer) {
+    acceptGesture(pointer);
+  }
+}
+class AllowMultipleHorizontalDragGestureRecognizer extends HorizontalDragGestureRecognizer {
+  ScrollPosition bindedPosition;
+
+  @override
+  void resolve(GestureDisposition disposition) {
+    if (bindedPosition.pixels >= bindedPosition.maxScrollExtent) {
+      // 找一下方向
+      if (_hasSufficientPendingDragDeltaToAccept) {
+//        print('${_pendingDragOffset.dx}');
+        if (_pendingDragOffset.dx > 0) {
+          super.resolve(disposition);
+        }
+      } else {
+        super.resolve(GestureDisposition.rejected);
+      }
+//      print('setting pass');
+    } else {
+//      print('setting not pass');
+      super.resolve(disposition);
+    }
   }
 }
 
