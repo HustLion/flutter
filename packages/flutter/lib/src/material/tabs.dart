@@ -1019,6 +1019,7 @@ class TabBarView extends StatefulWidget {
     @required this.children,
     this.controller,
     this.physics,
+    this.passGestureToParentWhenAtEnds = false,
   }) : assert(children != null), super(key: key);
 
   /// This widget's selection and animation state.
@@ -1026,6 +1027,8 @@ class TabBarView extends StatefulWidget {
   /// If [TabController] is not provided, then the value of [DefaultTabController.of]
   /// will be used.
   final TabController controller;
+
+  final bool passGestureToParentWhenAtEnds;
 
   /// One widget per tab.
   final List<Widget> children;
@@ -1186,6 +1189,7 @@ class _TabBarViewState extends State<TabBarView> {
       onNotification: _handleScrollNotification,
       child: PageView(
         controller: _pageController,
+        passGestureToParentWhenAtEnds: widget.passGestureToParentWhenAtEnds,
         physics: widget.physics == null ? _kTabBarViewPhysics : _kTabBarViewPhysics.applyTo(widget.physics),
         children: _children,
       ),

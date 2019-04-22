@@ -422,6 +422,7 @@ class PageView extends StatefulWidget {
     this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.passGestureToParentWhenAtEnds = false,
     List<Widget> children = const <Widget>[],
   }) : controller = controller ?? _defaultPageController,
        childrenDelegate = SliverChildListDelegate(children),
@@ -447,6 +448,7 @@ class PageView extends StatefulWidget {
     this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.passGestureToParentWhenAtEnds = false,
     @required IndexedWidgetBuilder itemBuilder,
     int itemCount,
   }) : controller = controller ?? _defaultPageController,
@@ -463,6 +465,7 @@ class PageView extends StatefulWidget {
     this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.passGestureToParentWhenAtEnds = false,
     @required this.childrenDelegate,
   }) : assert(childrenDelegate != null),
        controller = controller ?? _defaultPageController,
@@ -504,6 +507,8 @@ class PageView extends StatefulWidget {
 
   /// Set to false to disable page snapping, useful for custom scroll behavior.
   final bool pageSnapping;
+
+  final bool passGestureToParentWhenAtEnds;
 
   /// Called whenever the page in the center of the viewport changes.
   final ValueChanged<int> onPageChanged;
@@ -565,6 +570,7 @@ class _PageViewState extends State<PageView> {
         axisDirection: axisDirection,
         controller: widget.controller,
         physics: physics,
+        passGestureToParentWhenAtEnds: widget.passGestureToParentWhenAtEnds,
         viewportBuilder: (BuildContext context, ViewportOffset position) {
           return Viewport(
             cacheExtent: 0.0,
