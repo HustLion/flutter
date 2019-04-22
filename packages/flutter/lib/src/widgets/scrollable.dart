@@ -81,6 +81,7 @@ class Scrollable extends StatefulWidget {
     @required this.viewportBuilder,
     this.excludeFromSemantics = false,
     this.semanticChildCount,
+    this.passGestureToParentWhenAtEnds = false,
   }) : assert(axisDirection != null),
        assert(viewportBuilder != null),
        assert(excludeFromSemantics != null),
@@ -137,6 +138,13 @@ class Scrollable extends StatefulWidget {
   ///    scrollable should react to scroll requests (and possible overscroll)
   ///    even if the scrollable's contents fit without scrolling being necessary.
   final ScrollPhysics physics;
+
+  /// Pass gestures to parent instead of showing glowing effects when this
+  /// scrollable is at the beginning or the end and is scrolling outwards.
+  ///
+  /// This feature is useful for use cases like scrolling a parent tab group
+  /// to the next tab when its child tab group is scrolled to the last tab.
+  final bool passGestureToParentWhenAtEnds;
 
   /// Builds the viewport through which the scrollable content is displayed.
   ///
@@ -397,23 +405,42 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin
           };
           break;
         case Axis.horizontal:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            AllowMultipleHorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<AllowMultipleHorizontalDragGestureRecognizer>(
-              () => AllowMultipleHorizontalDragGestureRecognizer(),
-              (AllowMultipleHorizontalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = _physics?.minFlingDistance
-                  ..minFlingVelocity = _physics?.minFlingVelocity
-                  ..maxFlingVelocity = _physics?.maxFlingVelocity;
-                instance.bindedPosition = _position;
-              },
-            ),
-          };
+          if (widget.passGestureToParentWhenAtEnds) {
+            _gestureRecognizers = <Type, GestureRecognizerFactory>{
+              AllowMultipleHorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<AllowMultipleHorizontalDragGestureRecognizer>(
+                    () => AllowMultipleHorizontalDragGestureRecognizer(),
+                    (AllowMultipleHorizontalDragGestureRecognizer instance) {
+                  instance
+                    ..onDown = _handleDragDown
+                    ..onStart = _handleDragStart
+                    ..onUpdate = _handleDragUpdate
+                    ..onEnd = _handleDragEnd
+                    ..onCancel = _handleDragCancel
+                    ..minFlingDistance = _physics?.minFlingDistance
+                    ..minFlingVelocity = _physics?.minFlingVelocity
+                    ..maxFlingVelocity = _physics?.maxFlingVelocity;
+                  instance.bindedPosition = _position;
+                },
+              ),
+            };
+          } else {
+            _gestureRecognizers = <Type, GestureRecognizerFactory>{
+              HorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>(
+                    () => HorizontalDragGestureRecognizer(),
+                    (HorizontalDragGestureRecognizer instance) {
+                  instance
+                    ..onDown = _handleDragDown
+                    ..onStart = _handleDragStart
+                    ..onUpdate = _handleDragUpdate
+                    ..onEnd = _handleDragEnd
+                    ..onCancel = _handleDragCancel
+                    ..minFlingDistance = _physics?.minFlingDistance
+                    ..minFlingVelocity = _physics?.minFlingVelocity
+                    ..maxFlingVelocity = _physics?.maxFlingVelocity;
+                },
+              ),
+            };
+          }
           break;
       }
     }
