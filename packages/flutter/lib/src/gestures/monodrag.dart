@@ -258,7 +258,13 @@ class AllowMultipleHorizontalDragGestureRecognizer extends HorizontalDragGesture
       } else {
         super.resolve(GestureDisposition.rejected);
       }
-//      print('setting pass');
+    } else if (bindedPosition.pixels <= 0) {
+      // scrolled to the left and keep scrolling, then give control to parent
+      if (_hasSufficientPendingDragDeltaToAccept && _pendingDragOffset.dx > 0) {
+        super.resolve(GestureDisposition.rejected);
+      } else {
+        super.resolve(disposition);
+      }
     } else {
 //      print('setting not pass');
       super.resolve(disposition);
